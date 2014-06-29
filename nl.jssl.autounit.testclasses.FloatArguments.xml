@@ -1,0 +1,15 @@
+<map>
+  <entry>
+    <string>public int round(float arg1)</string>
+    <results>
+      <contents>
+        <case>
+          <input class="args">
+            <arg1>-Infinity</arg1>
+          </input>
+          <output class="int">-2147483648</output>
+        </case>
+      </contents>
+    </results>
+  </entry>
+</map>
