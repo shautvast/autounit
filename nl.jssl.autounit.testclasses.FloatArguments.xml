@@ -5,7 +5,7 @@
       <contents>
         <case>
           <input class="args">
-            <arg1>-7.5912475E37</arg1>
+            <arg1>-Infinity</arg1>
           </input>
           <output class="int">-2147483648</output>
         </case>

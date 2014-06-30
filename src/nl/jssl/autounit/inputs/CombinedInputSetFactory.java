@@ -28,24 +28,25 @@ public class CombinedInputSetFactory {
 		} else {
 			List<ArgumentsForSingleCall> allPossibleArguments = new ArrayList<>();
 
-			for (SingleTypeInputs<?> inputs : inputSetsForAllArguments) {
-				// make list of all permutations of first argument values
-				List<?> permutatedInputs = Permutator.permute(inputs);
-				int index = 0;
-				for (Object variable : permutatedInputs) {
-					// all lists ("columns") are combined into "rows"
-					if (index >= allPossibleArguments.size()) {
-						ArgumentsForSingleCall a = new ArgumentsForSingleCall();
-						a.add(variable);
-						allPossibleArguments.add(a);
-					} else {
-						ArgumentsForSingleCall argumentsForSingleCall = allPossibleArguments.get(index);
-						argumentsForSingleCall.add(variable);
-					}
-					index++;
-				}
-			}
+//			for (SingleTypeInputs<?> inputs : inputSetsForAllArguments) {
+//				// make list of all permutations of first argument values
+//				List<?> permutatedInputs = Permutator.permute(inputs);
+//				int index = 0;
+//				for (Object variable : permutatedInputs) {
+//					// all lists ("columns") are combined into "rows"
+//					if (index >= allPossibleArguments.size()) {
+//						ArgumentsForSingleCall a = new ArgumentsForSingleCall();
+//						a.add(variable);
+//						allPossibleArguments.add(a);
+//					} else {
+//						ArgumentsForSingleCall argumentsForSingleCall = allPossibleArguments.get(index);
+//						argumentsForSingleCall.add(variable);
+//					}
+//					index++;
+//				}
+//			}
 			// the row view
+			
 			return allPossibleArguments;
 		}
 

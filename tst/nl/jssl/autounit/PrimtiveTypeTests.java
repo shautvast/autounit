@@ -27,7 +27,7 @@ public class PrimtiveTypeTests {
 	public void testIntegerArgument() {
 		Map<String, MethodCallResults> results = new AutoTester().record(IntArguments.class);
 		Set<String> keys = results.keySet();
-		assertTrue(keys.contains("public java.lang.String evenOrUneven(int arg1)"));
+		assertTrue(keys.contains("public java.lang.String evenOrUneven(int arg1,int arg2)"));
 		MethodCallResults mcr = results.values().iterator().next();
 		System.out.println(mcr.getCoverageResult().getLineCounter().getMissedCount() + " missed lines");
 		System.out.println(mcr.getReport());

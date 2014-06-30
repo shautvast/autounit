@@ -1,8 +1,8 @@
 package nl.jssl.autounit.testclasses;
 
 public class IntArguments {
-	public String evenOrUneven(int number) {
-		if (number % 2 == 0)
+	public String evenOrUneven(int number, int number2) {
+		if ((number+number2)/2 % 2 == 0)
 			return "even";
 		else
 			return "uneven";
