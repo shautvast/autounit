@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import nl.jssl.autounit.utils.MemoryClassloader;
 import nl.jssl.autounit.utils.SilentObjectCreator;
 
 import org.jacoco.core.analysis.Analyzer;
@@ -15,7 +16,6 @@ import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
-import org.jacoco.examples.CoreTutorial.MemoryClassLoader;
 
 public class CoverageAnalyser {
 	private IRuntime runtime;
@@ -33,7 +33,7 @@ public class CoverageAnalyser {
 			data = new RuntimeData();
 			runtime.startup(data);
 
-			MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
+			MemoryClassloader memoryClassLoader = new MemoryClassloader();
 			memoryClassLoader.addDefinition(targetName, instrumented);
 			Class<T> targetClass = (Class<T>) memoryClassLoader.loadClass(targetName);
 

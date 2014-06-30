@@ -1,6 +1,6 @@
 package nl.jssl.autounit;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -18,12 +18,9 @@ import org.junit.Test;
 public class PrimtiveTypeTests {
 	@Test
 	public void testGetPublicMethods() throws NoSuchMethodException, SecurityException {
-		Method evenOrUneven = IntArguments.class.getMethod("evenOrUneven", int.class);
 		List<Method> publicMethods = new Recorder(IntArguments.class).getPublicMethods();
 
 		assertEquals(2, publicMethods.size());
-		assertEquals(evenOrUneven, publicMethods.get(0));
-
 	}
 
 	@Test
