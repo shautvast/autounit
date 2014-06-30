@@ -1,0 +1,21 @@
+<map>
+  <entry>
+    <string>public int getDouble(byte arg1)</string>
+    <results>
+      <contents>
+        <case>
+          <input class="args">
+            <arg1>-128</arg1>
+          </input>
+          <output class="int">-256</output>
+        </case>
+        <case>
+          <input class="args">
+            <arg1>0</arg1>
+          </input>
+          <output class="int">11</output>
+        </case>
+      </contents>
+    </results>
+  </entry>
+</map>

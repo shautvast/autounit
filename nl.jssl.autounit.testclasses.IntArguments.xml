@@ -1,0 +1,34 @@
+<map>
+  <entry>
+    <string>public java.lang.String evenOrUneven(int arg1)</string>
+    <results>
+      <contents>
+        <case>
+          <input class="args">
+            <arg1>-819817314</arg1>
+          </input>
+          <output class="string">even</output>
+        </case>
+        <case>
+          <input class="args">
+            <arg1>-916902647</arg1>
+          </input>
+          <output class="string">uneven</output>
+        </case>
+      </contents>
+    </results>
+  </entry>
+  <entry>
+    <string>public int randomOther(int arg1)</string>
+    <results>
+      <contents>
+        <case>
+          <input class="args">
+            <arg1>-1762850486</arg1>
+          </input>
+          <output class="int">0</output>
+        </case>
+      </contents>
+    </results>
+  </entry>
+</map>
