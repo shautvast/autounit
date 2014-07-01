@@ -4,22 +4,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Makes permutations of n lists of m elements, ie:
+ * 
+ * [A,B], [1,2] => [A,1], [A,2], [B,1], [B,2]
+ */
 public class Permuter {
 
 	public static List<Tuple> permute(List<List<?>> elements) {
-		if (elements.size() > 2) {
-			return permute(elements.get(0), elements.subList(1, elements.size() - 1));
-		} else if (elements.size() == 2) {
-			return permutePairs(elements.get(0), elements.get(1));
-		} else
-			throw new IllegalArgumentException("need at least 2");
-	}
+		if (elements.size() >= 2) {
+			List<Tuple> result = permutePairs(elements.remove(0), elements.remove(0));
 
-	private static List<Tuple> permute(List<?> list, List<List<?>> elements) {
-		if (elements.size() > 2) {
-			return permute(elements.get(0), elements.subList(1, elements.size() - 1));
+			for (List<?> element : elements) {
+				result = permutePairs(element, result);
+			}
+			return result;
 		} else {
-			return permutePairs(elements.get(0), elements.get(1));
+			throw new IllegalArgumentException("need at least 2");
 		}
 	}
 
@@ -60,11 +61,12 @@ public class Permuter {
 				add(pair.element2, list);
 			}
 		}
+
 		@Override
 		public String toString() {
-			String string="";
-			for (Object o:this){
-				string+=o.toString()+",";
+			String string = "";
+			for (Object o : this) {
+				string += o.toString() + "-";
 			}
 			return string;
 		}
