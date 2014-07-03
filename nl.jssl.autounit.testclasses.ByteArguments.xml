@@ -4,14 +4,14 @@
     <results>
       <contents>
         <case>
-          <input class="args">
-            <arg1>-128</arg1>
+          <input class="nl.jssl.autounit.utils.Permuter$Tuple">
+            <element1 class="byte">-128</element1>
           </input>
           <output class="int">-256</output>
         </case>
         <case>
-          <input class="args">
-            <arg1>0</arg1>
+          <input class="nl.jssl.autounit.utils.Permuter$Tuple">
+            <element1 class="byte">0</element1>
           </input>
           <output class="int">11</output>
         </case>

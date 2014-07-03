@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nl.jssl.autounit.utils.Permutator;
+import nl.jssl.autounit.utils.Permuter;
+import nl.jssl.autounit.utils.Permuter.Tuple;
 
 public class CombinedInputSetFactory {
 	private final Map<Class<?>, InputsFactory<?>> primitivesFactories;
@@ -16,60 +17,37 @@ public class CombinedInputSetFactory {
 		populateFactories();
 	}
 
-	public List<ArgumentsForSingleCall> getInputs(Class<?> testTarget, Method m) {
+	public List<Tuple> getInputs(Class<?> testTarget, Method m) {
 		return combine(getInputSetsForAllArguments(testTarget, m));
 	}
 
-	private List<ArgumentsForSingleCall> combine(List<SingleTypeInputs<?>> inputSetsForAllArguments) {
+	private List<Tuple> combine(List<List<?>> inputSetsForAllArguments) {
 		int nrOfParameters = inputSetsForAllArguments.size();
 		if (nrOfParameters == 1) {
 			// simple case
 			return makeArgumentsForSingleParameterCall(inputSetsForAllArguments);
 		} else {
-			List<ArgumentsForSingleCall> allPossibleArguments = new ArrayList<>();
-
-//			for (SingleTypeInputs<?> inputs : inputSetsForAllArguments) {
-//				// make list of all permutations of first argument values
-//				List<?> permutatedInputs = Permutator.permute(inputs);
-//				int index = 0;
-//				for (Object variable : permutatedInputs) {
-//					// all lists ("columns") are combined into "rows"
-//					if (index >= allPossibleArguments.size()) {
-//						ArgumentsForSingleCall a = new ArgumentsForSingleCall();
-//						a.add(variable);
-//						allPossibleArguments.add(a);
-//					} else {
-//						ArgumentsForSingleCall argumentsForSingleCall = allPossibleArguments.get(index);
-//						argumentsForSingleCall.add(variable);
-//					}
-//					index++;
-//				}
-//			}
-			// the row view
-			
-			return allPossibleArguments;
+			return Permuter.permute(inputSetsForAllArguments);
 		}
-
 	}
 
-	private List<ArgumentsForSingleCall> makeArgumentsForSingleParameterCall(
-			List<SingleTypeInputs<?>> generatedInputSetsForAllArguments) {
-		List<ArgumentsForSingleCall> allPossibleArguments = new ArrayList<ArgumentsForSingleCall>();
+	private List<Tuple> makeArgumentsForSingleParameterCall(
+			List<List<?>> generatedInputSetsForAllArguments) {
+		List<Tuple> allPossibleArguments = new ArrayList<Tuple>();
 
-		SingleTypeInputs<?> generatedInputs = generatedInputSetsForAllArguments.iterator().next();
+		List<?> generatedInputs = generatedInputSetsForAllArguments.iterator().next();
 
 		for (Object variable : generatedInputs) {
-			ArgumentsForSingleCall argument = new ArgumentsForSingleCall();
-			argument.add(variable);
+			Tuple argument = new Tuple(variable);
 			allPossibleArguments.add(argument);
 		}
 		return allPossibleArguments;
 	}
 
-	private List<SingleTypeInputs<?>> getInputSetsForAllArguments(Class<?> testTarget, Method m) {
-		List<SingleTypeInputs<?>> singleInputSets = new ArrayList<>();
+	private List<List<?>> getInputSetsForAllArguments(Class<?> testTarget, Method m) {
+		List<List<?>> singleInputSets = new ArrayList<>();
 		for (Class<?> parametertype : m.getParameterTypes()) {
-			SingleTypeInputs<?> inputs = tryPrimitives(testTarget, parametertype);
+			List<?> inputs = tryPrimitives(testTarget, parametertype);
 
 			if (inputs == null) {
 				inputs = new MocksFactory().getMockInputs(testTarget, parametertype);

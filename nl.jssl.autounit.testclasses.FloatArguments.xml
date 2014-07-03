@@ -4,8 +4,8 @@
     <results>
       <contents>
         <case>
-          <input class="args">
-            <arg1>-Infinity</arg1>
+          <input class="nl.jssl.autounit.utils.Permuter$Tuple">
+            <element1 class="float">-2.006128E38</element1>
           </input>
           <output class="int">-2147483648</output>
         </case>

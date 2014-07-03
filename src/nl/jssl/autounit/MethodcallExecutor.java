@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import nl.jssl.autounit.inputs.ArgumentsForSingleCall;
+import nl.jssl.autounit.utils.Permuter.Tuple;
 
 /**
  * voert 1 methode uit met wisselende input parameters en bewaart het resultaat.
@@ -22,10 +23,10 @@ public class MethodcallExecutor {
 		this.result = new MethodCallResults(instrumentedTestTarget, m);
 	}
 
-	public MethodCallResults execute(List<ArgumentsForSingleCall> inputs) {
+	public MethodCallResults execute(List<Tuple> inputs) {
 		int missedLines = Integer.MAX_VALUE;
 		InvocationResult lastInvocationResult = null, previous = null;
-		for (ArgumentsForSingleCall input : inputs) {
+		for (Tuple input : inputs) {
 			previous = lastInvocationResult;
 			lastInvocationResult = analyseMethodCall(m, input);
 			int missedCount = lastInvocationResult.coverage.getLineCounter().getMissedCount();
@@ -46,7 +47,7 @@ public class MethodcallExecutor {
 		return result;
 	}
 
-	private InvocationResult analyseMethodCall(Method m, ArgumentsForSingleCall input) {
+	private InvocationResult analyseMethodCall(Method m, Tuple input) {
 		return coverageAnalyser.analyse(instrumentedTestTarget, m, input.toArray());
 	}
 

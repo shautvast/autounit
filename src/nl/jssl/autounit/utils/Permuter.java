@@ -34,9 +34,14 @@ public class Permuter {
 		return pairs;
 	}
 
-	public static class Tuple implements Iterable<Object> {
+	public static class Tuple implements Iterable {
 		public final Object element1;
 		public final Object element2;
+
+		public Tuple(Object element1) {
+			this.element1 = element1;
+			this.element2 = null;
+		}
 
 		public Tuple(Object element1, Object element2) {
 			super();
@@ -46,10 +51,18 @@ public class Permuter {
 
 		@Override
 		public Iterator<Object> iterator() {
+			return asList().iterator();
+		}
+
+		private List<Object> asList() {
 			List<Object> list = new ArrayList<>();
-			add(element1, list);
-			add(element2, list);
-			return list.iterator();
+			if (element1 != null) {
+				add(element1, list);
+			}
+			if (element2 != null) {
+				add(element2, list);
+			}
+			return list;
 		}
 
 		private void add(Object element, List<Object> list) {
@@ -69,6 +82,10 @@ public class Permuter {
 				string += o.toString() + "-";
 			}
 			return string;
+		}
+
+		public Object[] toArray() {
+			return asList().toArray();
 		}
 	}
 }
