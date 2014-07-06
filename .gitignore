@@ -1,0 +1,12 @@
+/build
+/nl.jssl.autounit.testclasses.BooleanArguments.xml
+/nl.jssl.autounit.testclasses.ByteArguments.xml
+/nl.jssl.autounit.testclasses.FloatArguments.xml
+/nl.jssl.autounit.testclasses.IntArguments.xml
+/nl.jssl.autounit.testclasses.SomeBean.xml
+/nl.jssl.autounit.testclasses.StringArguments.xml
+/bin
+/.settings
+/.gradle
+/.project
+/.classpath

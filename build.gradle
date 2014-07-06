@@ -1,0 +1,29 @@
+apply plugin: 'java' 
+apply plugin: 'eclipse' 
+
+repositories{
+   mavenCentral()
+}
+
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
+
+sourceSets {
+    test {
+	java {
+	    srcDir 'src/test/testclasses' 
+	}
+    }
+}
+
+task wrapper{
+}
+
+dependencies{
+   compile 'javassist:javassist:3.12.1.GA'
+   compile 'com.thoughtworks.xstream:xstream:1.4.7'
+   compile 'org.mockito:mockito-all:1.9.5'
+   testCompile 'junit:junit:4.11'
+   testCompile 'org.jacoco:org.jacoco.core:0.7.1.201405082137'
+
+}
