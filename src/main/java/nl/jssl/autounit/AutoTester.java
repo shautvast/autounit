@@ -19,15 +19,6 @@ public class AutoTester {
 		return results;
 	}
 
-	// public void assertUnchangedBehaviour(Object instance) {
-	// Map<String, MethodCallResults> recordedResults =
-	// load(getClassname(instance));
-	// for (Entry<String, MethodCallResults> entry : recordedResults.entrySet())
-	// {
-	//
-	// }
-	// }
-
 	private Map<String, MethodCallResults> load(String classname) {
 		try {
 			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(classname + ".dat"));
