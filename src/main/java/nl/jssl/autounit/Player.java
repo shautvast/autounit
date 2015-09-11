@@ -24,8 +24,4 @@ public class Player {
 
     }
 
-    // private Method getMethod(String key) {
-    // // TODO Auto-generated method stub
-    //
-    // }
 }
