@@ -14,14 +14,12 @@ public class Player {
     public void playback(Map<String, List<MethodCallResults>> recordedResults) {
         for (Entry<String, List<MethodCallResults>> entry: recordedResults.entrySet()) {
             getInputs(entry.getValue());
-            // new Executor(testinstance,getMethod(entry.getKey()))
         }
 
     }
 
     private void getInputs(List<MethodCallResults> value) {
-        // TODO Auto-generated method stub
-
+        
     }
 
 }
