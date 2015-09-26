@@ -8,6 +8,9 @@ import java.util.List;
 import nl.jssl.autounit.inputs.MethodcallArgumentsFactory;
 import nl.jssl.autounit.util.LinkedList;
 
+/**
+ * Analyses the class you want to create tests for.
+ */
 public class ClassAnalyser<T> {
 	private Class<T> testTarget;
 

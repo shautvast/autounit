@@ -17,6 +17,11 @@ import org.jacoco.core.runtime.RuntimeData;
 import nl.jssl.autounit.util.MemoryClassloader;
 import nl.jssl.autounit.util.SilentObjectCreator;
 
+/**
+ * When creating tests, increasing coverage indicates a good test. Hence a
+ * CoverageAnalyser. It uses Jacoco (http://eclemma.org/jacoco/), the java
+ * interface for eclemma.
+ */
 public class CoverageAnalyser<T> {
 	private final IRuntime runtime;
 	private final RuntimeData data;

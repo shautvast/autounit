@@ -8,7 +8,6 @@ import nl.jssl.autounit.util.LinkedList;
 /**
  * Executes 1 method using alternating input parameters and yields execution
  * results.
- * 
  */
 public class MethodcallExecutor<T> {
 	private T instrumentedTestTarget;
