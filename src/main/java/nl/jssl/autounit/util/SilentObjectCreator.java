@@ -1,7 +1,9 @@
 package nl.jssl.autounit.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
+import nl.jssl.autounit.classanalyser.AnalysisFailed;
 import sun.reflect.ReflectionFactory;
 
 /**
@@ -16,14 +18,20 @@ public class SilentObjectCreator {
 
 	public static <T> T create(Class<T> clazz, Class<? super T> parent) {
 		try {
-			ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
-			Constructor<?> objDef = parent.getDeclaredConstructor();
-			Constructor<T> intConstr = (Constructor<T>) rf.newConstructorForSerialization(clazz, objDef);
-			return clazz.cast(intConstr.newInstance());
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IllegalStateException("Cannot create object", e);
+			return tryCreateInstance(clazz, parent);
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+				| InvocationTargetException e) {
+			throw new AnalysisFailed("Cannot create object", e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T tryCreateInstance(Class<T> clazz, Class<? super T> parent)
+			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+
+		ReflectionFactory reflectionFactory = ReflectionFactory.getReflectionFactory();
+		Constructor<?> objDef = parent.getDeclaredConstructor();
+		Constructor<T> intConstr = (Constructor<T>) reflectionFactory.newConstructorForSerialization(clazz, objDef);
+		return clazz.cast(intConstr.newInstance());
 	}
 }

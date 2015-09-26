@@ -2,21 +2,20 @@ package nl.jssl.autounit.inputs.objects;
 
 import java.lang.reflect.Method;
 
-import nl.jssl.autounit.inputs.ArgumentsForSingleParameter;
-import nl.jssl.autounit.inputs.MethodcallArgumentsFactory;
-
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import nl.jssl.autounit.inputs.ArgumentsForSingleParameter;
+
 /**
- * Creates arguments if they are objects. Methods that return values are populated like in regular mocking.
+ * Creates arguments if they are objects. Methods that return values are
+ * populated like in regular mocking.
  * 
  */
 public class ObjectArgumentFactory {
-	private MethodcallArgumentsFactory argumentsFactory;
 
-	public ArgumentsForSingleParameter<?> getObjectArgument(Class<?> testTarget, Class<?> parametertype) {
+	public ArgumentsForSingleParameter<?> getObjectArgument(Class<?> parametertype) {
 		ArgumentsForSingleParameter<Object> inputs = new ArgumentsForSingleParameter<Object>();
 		Object mock = createMock(parametertype);
 		inputs.add(mock);
@@ -44,12 +43,9 @@ public class ObjectArgumentFactory {
 
 	}
 
-	static boolean returnsVoid(Method m) {
-		Class<?> returnType = m.getReturnType();
+	static boolean returnsVoid(Method method) {
+		Class<?> returnType = method.getReturnType();
 		return returnType != Void.TYPE;
 	}
 
-	public void setArgumentsFactory(MethodcallArgumentsFactory argumentsFactory) {
-		this.argumentsFactory = argumentsFactory;
-	}
 }

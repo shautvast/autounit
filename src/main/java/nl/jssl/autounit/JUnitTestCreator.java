@@ -6,49 +6,50 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import nl.jssl.autounit.classanalyser.ClassAnalyser;
+import nl.jssl.autounit.classanalyser.ClassResults;
 import nl.jssl.autounit.results.JUnitSourceWriter;
 
 /**
  * Creates a Junit source file
  *
  */
-public class JUnitTestCreator {
+public class JUnitTestCreator<T> {
 
 	private static final String SOURCEDIRECTORY = "src/outcome/java/";
+	private final Class<T> classUnderTest;
+	private final File packageDirectory;
 
-	public void assembleJUnitTest(Class<?> type) {
+	public JUnitTestCreator(Class<T> type) {
+		this.classUnderTest = type;
+		packageDirectory = createPackageDirectory();
+	}
+
+	public void create() {
 		try {
-			tryAssembleJUnitTest(type);
+			writeSourceFile();
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void tryAssembleJUnitTest(Class<?> type) throws FileNotFoundException {
-		writeSourceFile(createPackageDirectory(type), type);
+	private void writeSourceFile() throws FileNotFoundException {
+		ClassResults results = new ClassAnalyser<>(classUnderTest).analyseAndGetResults();
+		getSourceWriter(packageDirectory).write(results);
 	}
 
-	private void writeSourceFile(File packageDirectory, Class<?> classUnderTest) throws FileNotFoundException {
-		resultsWriter(packageDirectory, classUnderTest).write(new ClassAnalyser(classUnderTest).analyse());
+	private JUnitSourceWriter getSourceWriter(File packageDirectory) throws FileNotFoundException {
+		return new JUnitSourceWriter(new PrintStream(new FileOutputStream(getSourceFile())));
 	}
 
-	private JUnitSourceWriter resultsWriter(File packageDirectory, Class<?> type) throws FileNotFoundException {
-		return new JUnitSourceWriter(
-				new PrintStream(new FileOutputStream(toSourceFile(packageDirectory, type))));
-	}
-
-	private File createPackageDirectory(Class<?> type) {
-		File packageDirectory = toPackageDirectory(type);
+	private File createPackageDirectory() {
+		File packageDirectory = new File(
+				SOURCEDIRECTORY + classUnderTest.getPackage().getName().replaceAll("\\.", "/"));
 		packageDirectory.mkdirs();
 		return packageDirectory;
 	}
 
-	private File toSourceFile(File packageDirectory, Class<?> type) {
-		return new File(packageDirectory, type.getName().replaceAll("\\.", "/") + "Tests.java");
-	}
-
-	private File toPackageDirectory(Class<?> type) {
-		return new File(SOURCEDIRECTORY + type.getPackage().getName().replaceAll("\\.", "/"));
+	private File getSourceFile() {
+		return new File(packageDirectory, classUnderTest.getSimpleName() + "Tests.java");
 	}
 
 }

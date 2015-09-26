@@ -9,33 +9,43 @@ import javassist.NotFoundException;
 import javassist.bytecode.ConstPool;
 
 /**
+ * Reads the constantpool of a class (see jvm spec)
  */
 public class ConstantpoolReader {
 
-	private ClassPool pool;
+	private final static ClassPool pool;
+	private final Class<?> classToRead;
+	private final List<String> strings = new ArrayList<String>();
 
-	public ConstantpoolReader(ClassPool pool) {
-		this.pool = pool;
+	static {
+		pool = ClassPool.getDefault();
 	}
 
-	public List<String> scanStrings(Class<?> target) {
+	public ConstantpoolReader(Class<?> classToRead) {
+		this.classToRead = classToRead;
+	}
+
+	public List<String> scanStrings() {
 		CtClass ctClass;
 		try {
-			ctClass = pool.get(target.getName());
-			List<String> strings = new ArrayList<String>();
+			ctClass = pool.get(classToRead.getName());
 			if (isScannable(ctClass)) {
 				ConstPool constPool = ctClass.getClassFile().getConstPool();
-				int size = constPool.getSize();
-				for (int i = 1; i < size; i++) {
-					int tag = constPool.getTag(i);
-					if (tag == ConstPool.CONST_String) {
-						strings.add(constPool.getStringInfo(i));
-					}
-				}
+				doScanStrings(constPool);
 			}
 			return strings;
 		} catch (NotFoundException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void doScanStrings(ConstPool constPool) {
+		for (int i = 1; i < constPool.getSize(); i++) {
+			int tag = constPool.getTag(i);
+
+			if (tag == ConstPool.CONST_String) {
+				strings.add(constPool.getStringInfo(i));
+			}
 		}
 	}
 

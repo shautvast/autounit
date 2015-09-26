@@ -15,22 +15,24 @@ import nl.jssl.autounit.inputs.primitives.ByteArgumentFactory;
 import nl.jssl.autounit.inputs.primitives.DoubleArgumentFactory;
 import nl.jssl.autounit.inputs.primitives.FloatArgumentFactory;
 import nl.jssl.autounit.inputs.primitives.IntegerArgumentFactory;
-import nl.jssl.autounit.util.Pair;
+import nl.jssl.autounit.util.LinkedList;
 import nl.jssl.autounit.util.Permuter;
 
 public class MethodcallArgumentsFactory {
 	private final Map<Class<?>, ArgumentFactory<?>> primitivesFactories;
+	private final Class<?> testTarget;
 
-	public MethodcallArgumentsFactory() {
+	public MethodcallArgumentsFactory(Class<?> testTarget) {
+		this.testTarget = testTarget;
 		primitivesFactories = new HashMap<Class<?>, ArgumentFactory<?>>();
 		populateFactories();
 	}
 
-	public List<Pair> getInputs(Class<?> testTarget, Method m) {
-		return combine(getArgumentsForAllParameters(testTarget, m));
+	public List<LinkedList> getInputs(Method method) {
+		return combine(getArgumentsForAllParameters(method));
 	}
 
-	private List<Pair> combine(List<List<?>> inputSetsForAllArguments) {
+	private List<LinkedList> combine(List<List<?>> inputSetsForAllArguments) {
 		int nrOfParameters = inputSetsForAllArguments.size();
 		if (nrOfParameters == 0) {
 			return Collections.emptyList();
@@ -42,25 +44,25 @@ public class MethodcallArgumentsFactory {
 		}
 	}
 
-	private List<Pair> makeArgumentsForSingleParameterCall(List<List<?>> generatedInputSetsForAllArguments) {
-		List<Pair> allPossibleArguments = new ArrayList<>();
+	private List<LinkedList> makeArgumentsForSingleParameterCall(List<List<?>> generatedInputSetsForAllArguments) {
+		List<LinkedList> allPossibleArguments = new ArrayList<>();
 
 		List<?> generatedInputs = generatedInputSetsForAllArguments.iterator().next();
 
 		for (Object variable : generatedInputs) {
-			Pair argument = new Pair(variable);
+			LinkedList argument = new LinkedList(variable);
 			allPossibleArguments.add(argument);
 		}
 		return allPossibleArguments;
 	}
 
-	List<List<?>> getArgumentsForAllParameters(Class<?> testTarget, Method m) {
+	List<List<?>> getArgumentsForAllParameters(Method method) {
 		List<List<?>> singleInputSets = new ArrayList<List<?>>();
-		for (Class<?> parametertype : m.getParameterTypes()) {
-			List<?> inputs = tryPrimitives(testTarget, parametertype);
+		for (Class<?> parametertype : method.getParameterTypes()) {
+			List<?> inputs = tryPrimitives(parametertype);
 
 			if (inputs == null) {
-				inputs = new ObjectArgumentFactory().getObjectArgument(testTarget, parametertype);
+				inputs = new ObjectArgumentFactory().getObjectArgument(parametertype);
 			}
 			if (inputs != null) {
 				singleInputSets.add(inputs);
@@ -69,7 +71,7 @@ public class MethodcallArgumentsFactory {
 		return singleInputSets;
 	}
 
-	private ArgumentsForSingleParameter<?> tryPrimitives(Class<?> testTarget, Class<?> parametertype) {
+	private ArgumentsForSingleParameter<?> tryPrimitives(Class<?> parametertype) {
 		ArgumentFactory<?> inputsFactory = primitivesFactories.get(parametertype);
 		if (inputsFactory != null) {
 			return inputsFactory.getInputs(testTarget);

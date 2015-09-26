@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Pair implements Iterable<Object> {
+public class LinkedList implements Iterable<Object> {
 	public final Object element1;
 	public final Object element2;
 
-	public Pair(Object element1) {
+	public LinkedList(Object element1) {
 		this.element1 = element1;
 		this.element2 = null;
 	}
 
-	public Pair(Object element1, Object element2) {
+	public LinkedList(Object element1, Object element2) {
 		super();
 		this.element1 = element1;
 		this.element2 = element2;
@@ -22,15 +22,15 @@ public class Pair implements Iterable<Object> {
 	public int depth() {
 		int d = 0;
 		if (element2 != null) {
-			if (element2 instanceof Pair) {
-				d += 1 + ((Pair) element2).depth();
+			if (element2 instanceof LinkedList) {
+				d += 1 + ((LinkedList) element2).depth();
 			} else {
 				d += 1;
 			}
 		}
 		if (element1 != null) {
-			if (element1 instanceof Pair) {
-				d += 1 + ((Pair) element1).depth();
+			if (element1 instanceof LinkedList) {
+				d += 1 + ((LinkedList) element1).depth();
 			} else {
 				d += 1;
 			}
@@ -57,8 +57,8 @@ public class Pair implements Iterable<Object> {
 	}
 
 	private void add(Object element, List<Object> list) {
-		if (element instanceof Pair) {
-			Pair pair = (Pair) element;
+		if (element instanceof LinkedList) {
+			LinkedList pair = (LinkedList) element;
 			add(pair.element1, list);
 			add(pair.element2, list);
 		} else {

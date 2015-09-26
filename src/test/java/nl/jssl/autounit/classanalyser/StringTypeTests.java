@@ -12,8 +12,9 @@ public class StringTypeTests {
 
 	@Test
 	public void testStringArgumentShouldBeTjeempie() {
-		List<MethodCallResults> results = new ClassAnalyser(StringArguments.class).analyse().getMethodCallResults();
-		MethodCallResults mcr = results.get(0);
+		List<MethodExecutionResults> results = new ClassAnalyser<>(StringArguments.class).analyseAndGetResults()
+				.getMethodCallResults();
+		MethodExecutionResults mcr = results.get(0);
 		String methodSignature = mcr.getMethodSignature();
 		assertEquals("public boolean getBar(java.lang.String arg1)", methodSignature);
 		System.out.println(mcr.getCoverageResult().getLineCounter().getMissedCount() + " missed lines");

@@ -6,35 +6,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.jssl.autounit.inputs.MethodcallArgumentsFactory;
-import nl.jssl.autounit.util.Pair;
+import nl.jssl.autounit.util.LinkedList;
 
-public class ClassAnalyser {
-	private Class<?> testTarget;
+public class ClassAnalyser<T> {
+	private Class<T> testTarget;
 
-	public ClassAnalyser(Class<?> testTarget) {
+	public ClassAnalyser(Class<T> testTarget) {
 		this.testTarget = testTarget;
 	}
 
-	public ClassResults analyse() {
-		List<MethodCallResults> classresults = new ArrayList<>();
+	public ClassResults analyseAndGetResults() {
+		List<MethodExecutionResults> classresults = new ArrayList<>();
+
 		for (Method m : getPublicMethods()) {
-			MethodCallResults methodresults = recordMethod(m);
-			classresults.add(methodresults);
+			classresults.add(analyseMethod(m));
 		}
 
 		return new ClassResults(testTarget, classresults);
 	}
 
-	private MethodCallResults recordMethod(Method m) {
-		List<Pair> inputSet = new MethodcallArgumentsFactory().getInputs(testTarget, m);
-		MethodcallExecutor methodcallExecutor = new MethodcallExecutor(testTarget, m);
-		methodcallExecutor.execute(inputSet);
-		MethodCallResults mcr = methodcallExecutor.getResult();
-		return mcr;
+	private MethodExecutionResults analyseMethod(Method method) {
+		List<LinkedList> inputSet = new MethodcallArgumentsFactory(testTarget).getInputs(method);
+
+		MethodcallExecutor<T> methodcallExecutor = new MethodcallExecutor<>(testTarget, method);
+
+		return methodcallExecutor.executeAndGetResults(inputSet);
 	}
 
 	List<Method> getPublicMethods() {
 		List<Method> publicMethods = new ArrayList<Method>();
+
 		for (Method m : testTarget.getDeclaredMethods()) {
 			if (Modifier.isPublic(m.getModifiers())) {
 				publicMethods.add(m);

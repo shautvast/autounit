@@ -3,30 +3,32 @@ package nl.jssl.autounit.classanalyser;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import nl.jssl.autounit.util.Pair;
+import nl.jssl.autounit.util.LinkedList;
 
 /**
- * voert 1 methode uit met wisselende input parameters en bewaart het resultaat.
+ * Executes 1 method using alternating input parameters and yields execution
+ * results.
  * 
  */
-public class MethodcallExecutor {
-	private Object instrumentedTestTarget;
+public class MethodcallExecutor<T> {
+	private T instrumentedTestTarget;
 	private Method methodUnderTest;
-	CoverageAnalyser coverageAnalyser = new CoverageAnalyser();
-	private MethodCallResults result;
+	private MethodExecutionResults result;
+	private final CoverageAnalyser<T> coverageAnalyser;
 
-	public MethodcallExecutor(Class<?> testClass, Method methodUnderTest) {
-		super();
-		this.instrumentedTestTarget = coverageAnalyser.instrument(testClass);
+	public MethodcallExecutor(Class<T> testClass, Method methodUnderTest) {
+		coverageAnalyser = new CoverageAnalyser<T>(testClass);
+		this.instrumentedTestTarget = coverageAnalyser.instrument();
+
 		this.methodUnderTest = methodUnderTest;
-		this.result = new MethodCallResults(instrumentedTestTarget, methodUnderTest);
+		this.result = new MethodExecutionResults(instrumentedTestTarget, methodUnderTest);
 	}
 
-	public MethodCallResults execute(List<Pair> inputs) {
+	public MethodExecutionResults executeAndGetResults(List<LinkedList> inputs) {
 		InvocationResult lastInvocationResult = null, previous = null;
 
 		int missedLines = Integer.MAX_VALUE;
-		for (Pair input : inputs) {
+		for (LinkedList input : inputs) {
 			previous = lastInvocationResult;
 
 			lastInvocationResult = analyseMethodCall(methodUnderTest, input);
@@ -51,7 +53,7 @@ public class MethodcallExecutor {
 	}
 
 	private int addInOutputCombinationWhenCoverageIncreases(int missedLines, InvocationResult lastInvocationResult,
-			Pair input, int missedCount) {
+			LinkedList input, int missedCount) {
 		if (coverageHasIncreased(missedLines, missedCount)) {
 			missedLines = missedCount;
 			addInterestingInAndOutput(input, lastInvocationResult);
@@ -59,7 +61,7 @@ public class MethodcallExecutor {
 		return missedLines;
 	}
 
-	private void addInterestingInAndOutput(Pair input, InvocationResult lastInvocationResult) {
+	private void addInterestingInAndOutput(LinkedList input, InvocationResult lastInvocationResult) {
 		result.addResult(input, lastInvocationResult.getOutput());
 	}
 
@@ -71,7 +73,7 @@ public class MethodcallExecutor {
 		return missedCount < missedLines;
 	}
 
-	private InvocationResult analyseMethodCall(Method methodUnderTest, Pair input) {
+	private InvocationResult analyseMethodCall(Method methodUnderTest, LinkedList input) {
 		Object[] inputs = replaceNullIndicatorWithNull(input.toArray());
 
 		return coverageAnalyser.analyse(instrumentedTestTarget, methodUnderTest, inputs);
@@ -86,7 +88,4 @@ public class MethodcallExecutor {
 		return argumentarray;
 	}
 
-	public MethodCallResults getResult() {
-		return result;
-	}
 }

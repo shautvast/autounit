@@ -4,17 +4,20 @@ import javassist.ClassPool;
 import javassist.NotFoundException;
 
 /**
- * TODO make configurable
  * 
  */
 public class Configuration {
 	public static ClassPool getClassPool() {
 		ClassPool classPool = new ClassPool();
 		try {
-			classPool.appendClassPath("bin");
+			classPool.appendClassPath(getClasspathSettingOrEclipseDefault());
 		} catch (NotFoundException e) {
 			throw new RuntimeException(e);
 		}
 		return classPool;
+	}
+
+	private static String getClasspathSettingOrEclipseDefault() {
+		return System.getProperty("autounit.cp", "bin");
 	}
 }

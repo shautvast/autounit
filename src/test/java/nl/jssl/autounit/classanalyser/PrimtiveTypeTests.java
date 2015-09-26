@@ -17,15 +17,15 @@ import nl.jssl.autounit.testclasses.IntArguments;
 public class PrimtiveTypeTests {
 	@Test
 	public void testGetPublicMethods() throws NoSuchMethodException, SecurityException {
-		List<Method> publicMethods = new ClassAnalyser(IntArguments.class).getPublicMethods();
+		List<Method> publicMethods = new ClassAnalyser<>(IntArguments.class).getPublicMethods();
 
 		assertEquals(2, publicMethods.size());
 	}
 
 	@Test
 	public void testIntegerArgument() {
-		Iterator<MethodCallResults> methodCallResults = new TreeSet<>(
-				new ClassAnalyser(IntArguments.class).analyse().getMethodCallResults()).iterator();
+		Iterator<MethodExecutionResults> methodCallResults = new TreeSet<>(
+				new ClassAnalyser<>(IntArguments.class).analyseAndGetResults().getMethodCallResults()).iterator();
 
 		assertEquals("public java.lang.String evenOrUneven(int arg1,int arg2)",
 				methodCallResults.next().getMethodSignature());
@@ -34,19 +34,22 @@ public class PrimtiveTypeTests {
 
 	@Test
 	public void testBooleanArgument() {
-		MethodCallResults mcr = new ClassAnalyser(BooleanArguments.class).analyse().getMethodCallResults().get(0);
+		MethodExecutionResults mcr = new ClassAnalyser<>(BooleanArguments.class).analyseAndGetResults()
+				.getMethodCallResults().get(0);
 		assertEquals(mcr.getMethodSignature(), "public java.lang.String getText(boolean arg1,boolean arg2)");
 	}
 
 	@Test
 	public void testByteArgument() {
-		MethodCallResults mcr = new ClassAnalyser(ByteArguments.class).analyse().getMethodCallResults().get(0);
+		MethodExecutionResults mcr = new ClassAnalyser<>(ByteArguments.class).analyseAndGetResults().getMethodCallResults()
+				.get(0);
 		assertEquals(mcr.getMethodSignature(), "public int getDouble(byte arg1)");
 	}
 
 	@Test
 	public void testFloatArgument() {
-		MethodCallResults mcr = new ClassAnalyser(FloatArguments.class).analyse().getMethodCallResults().get(0);
+		MethodExecutionResults mcr = new ClassAnalyser<>(FloatArguments.class).analyseAndGetResults().getMethodCallResults()
+				.get(0);
 		assertEquals(mcr.getMethodSignature(), "public int round(float arg1)");
 	}
 

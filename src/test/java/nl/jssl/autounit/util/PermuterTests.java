@@ -21,7 +21,7 @@ public class PermuterTests {
 		List<List<?>> outer = new ArrayList<List<?>>();
 		outer.add(integers);
 		outer.add(strings);
-		List<Pair> permuted = Permuter.permute(outer);
+		List<LinkedList> permuted = Permuter.permute(outer);
 
 		assertEquals("1-A-", permuted.get(0).toString());
 		assertEquals("1-B-", permuted.get(1).toString());
@@ -46,7 +46,7 @@ public class PermuterTests {
 		outer.add(strings);
 		outer.add(vogons);
 
-		List<Pair> permuted = Permuter.permute(outer);
+		List<LinkedList> permuted = Permuter.permute(outer);
 		assertEquals("Vogon Jeltz-1-A-", permuted.get(0).toString());
 		assertEquals("Vogon Jeltz-1-B-", permuted.get(1).toString());
 		assertEquals("Vogon Jeltz-2-A-", permuted.get(2).toString());

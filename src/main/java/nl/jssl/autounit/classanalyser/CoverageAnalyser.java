@@ -17,41 +17,35 @@ import org.jacoco.core.runtime.RuntimeData;
 import nl.jssl.autounit.util.MemoryClassloader;
 import nl.jssl.autounit.util.SilentObjectCreator;
 
-public class CoverageAnalyser {
-	private IRuntime runtime;
-	private RuntimeData data = new RuntimeData();
+public class CoverageAnalyser<T> {
+	private final IRuntime runtime;
+	private final RuntimeData data;
+	private final Class<T> testTarget;
 
-	@SuppressWarnings("unchecked")
-	public <T> T instrument(Class<T> testTarget) {
+	public CoverageAnalyser(Class<T> testTarget) {
+		this.testTarget = testTarget;
+		data = new RuntimeData();
+		runtime = new LoggerRuntime();
+	}
+
+	public T instrument() {
 		try {
-			String targetName = testTarget.getName();
-
-			runtime = new LoggerRuntime();
-
-			Instrumenter instr = new Instrumenter(runtime);
-			byte[] instrumented = instr.instrument(getTargetClass(targetName), targetName);
-
-			data = new RuntimeData();
 			runtime.startup(data);
 
-			MemoryClassloader memoryClassLoader = new MemoryClassloader();
-			memoryClassLoader.addDefinition(targetName, instrumented);
-			Class<T> targetClass = (Class<T>) memoryClassLoader.loadClass(targetName);
-
-			return SilentObjectCreator.create(targetClass);
+			return getInstrumentedObjectInstance();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new AnalysisFailed(e);
 		}
 	}
 
-	public <T> InvocationResult analyse(T instrumentedTestTarget, Method method, Object[] inputs) {
+	public InvocationResult analyse(T instrumentedTestTarget, Method method, Object[] inputs) {
 		try {
-			Method instanceMethod = getInstrumentedMethod(instrumentedTestTarget, method);
-			Object output = invoke(instrumentedTestTarget, inputs, instanceMethod);
+			Object output = invokeMethod(instrumentedTestTarget, inputs,
+					getInstrumentedMethod(instrumentedTestTarget, method));
 
 			// jacoco stuff
 			ExecutionDataStore executionData = executionData();
-			
+
 			runtime.shutdown();
 
 			CoverageBuilder coverageBuilder = coverageBuilder(instrumentedTestTarget, executionData);
@@ -62,6 +56,24 @@ public class CoverageAnalyser {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private T getInstrumentedObjectInstance() throws IOException, ClassNotFoundException {
+		MemoryClassloader memoryClassLoader = getMemoryClassLoaderForClass(getInstrumentedByteCode());
+		Class<T> targetClass = (Class<T>) memoryClassLoader.loadClass(testTarget.getName());
+
+		return SilentObjectCreator.create(targetClass);
+	}
+
+	private byte[] getInstrumentedByteCode() throws IOException {
+		return new Instrumenter(runtime).instrument(getTargetClass(), testTarget.getName());
+	}
+
+	private MemoryClassloader getMemoryClassLoaderForClass(byte[] instrumentedByteCode) {
+		MemoryClassloader memoryClassLoader = new MemoryClassloader();
+		memoryClassLoader.addDefinition(testTarget.getName(), instrumentedByteCode);
+		return memoryClassLoader;
+	}
+
 	private ExecutionDataStore executionData() {
 		ExecutionDataStore executionData = new ExecutionDataStore();
 		SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -69,20 +81,20 @@ public class CoverageAnalyser {
 		return executionData;
 	}
 
-	private <T> CoverageBuilder coverageBuilder(T instrumentedTestTarget, ExecutionDataStore executionData)
+	private CoverageBuilder coverageBuilder(T instrumentedTestTarget, ExecutionDataStore executionData)
 			throws IOException {
 		CoverageBuilder coverageBuilder = new CoverageBuilder();
 		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 		String targetName = instrumentedTestTarget.getClass().getName();
-		analyzer.analyzeClass(getTargetClass(targetName), targetName);
+		analyzer.analyzeClass(getTargetClass(), targetName);
 		return coverageBuilder;
 	}
 
-	private <T> Method getInstrumentedMethod(T testTarget, Method method) throws NoSuchMethodException {
+	private Method getInstrumentedMethod(T testTarget, Method method) throws NoSuchMethodException {
 		return testTarget.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
 	}
 
-	private <T> Object invoke(T testTarget, Object[] inputs, Method newInstanceMethod) throws IllegalAccessException {
+	private Object invokeMethod(T testTarget, Object[] inputs, Method newInstanceMethod) throws IllegalAccessException {
 		Object output;
 		try {
 			output = newInstanceMethod.invoke(testTarget, inputs);
@@ -101,8 +113,8 @@ public class CoverageAnalyser {
 		return output;
 	}
 
-	private InputStream getTargetClass(String name) {
-		String resource = '/' + name.replace('.', '/') + ".class";
+	private InputStream getTargetClass() {
+		String resource = '/' + testTarget.getName().replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resource);
 	}
 

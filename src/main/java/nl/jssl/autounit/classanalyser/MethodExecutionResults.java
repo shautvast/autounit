@@ -7,21 +7,21 @@ import java.util.List;
 
 import org.jacoco.core.analysis.IClassCoverage;
 
-import nl.jssl.autounit.util.Pair;
+import nl.jssl.autounit.util.LinkedList;
 
-public class MethodCallResults implements Comparable<MethodCallResults> {
+public class MethodExecutionResults implements Comparable<MethodExecutionResults> {
 	private transient Object testinstance;
 	private transient Method executedMethod;
 	private List<InAndOutput> contents = new ArrayList<InAndOutput>();
 	private transient IClassCoverage coverageResult;
 
-	public MethodCallResults(Object testClass, Method m) {
+	public MethodExecutionResults(Object testClass, Method m) {
 		super();
 		this.testinstance = testClass;
 		this.executedMethod = m;
 	}
 
-	public void addResult(Pair input, Object output) {
+	public void addResult(LinkedList input, Object output) {
 		contents.add(new InAndOutput(input, output));
 	}
 
@@ -86,7 +86,7 @@ public class MethodCallResults implements Comparable<MethodCallResults> {
 	}
 
 	@Override
-	public int compareTo(MethodCallResults o) {
+	public int compareTo(MethodExecutionResults o) {
 		return getMethodName().compareTo(o.getMethodName());
 	}
 }

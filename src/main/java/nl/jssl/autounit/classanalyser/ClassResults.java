@@ -4,15 +4,15 @@ import java.util.List;
 
 public class ClassResults {
 	private final Class<?> type;
-	private final List<MethodCallResults> methodCallResults;
+	private final List<MethodExecutionResults> methodCallResults;
 
-	public ClassResults(Class<?> type, List<MethodCallResults> methodCallResults) {
+	public ClassResults(Class<?> type, List<MethodExecutionResults> methodCallResults) {
 		super();
 		this.type = type;
 		this.methodCallResults = methodCallResults;
 	}
 
-	public List<MethodCallResults> getMethodCallResults() {
+	public List<MethodExecutionResults> getMethodCallResults() {
 		return methodCallResults;
 	}
 

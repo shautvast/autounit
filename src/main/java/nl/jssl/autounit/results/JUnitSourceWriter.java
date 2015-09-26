@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 import nl.jssl.autounit.classanalyser.ClassResults;
 import nl.jssl.autounit.classanalyser.InAndOutput;
-import nl.jssl.autounit.classanalyser.MethodCallResults;
+import nl.jssl.autounit.classanalyser.MethodExecutionResults;
 
 public class JUnitSourceWriter extends ResultsWriter {
 
@@ -25,7 +25,7 @@ public class JUnitSourceWriter extends ResultsWriter {
 		out.println();
 		out.println("public class " + results.getType().getSimpleName() + "Tests {");
 		Count index = new Count(1);
-		for (MethodCallResults mcr : results.getMethodCallResults()) {
+		for (MethodExecutionResults mcr : results.getMethodCallResults()) {
 			for (InAndOutput inout : mcr.getContents()) {
 				writeMethod(index, results, mcr, inout);
 			}
@@ -34,7 +34,7 @@ public class JUnitSourceWriter extends ResultsWriter {
 		out.println("}");
 	}
 
-	private void writeMethod(Count index, ClassResults results, MethodCallResults mcr, InAndOutput inout) {
+	private void writeMethod(Count index, ClassResults results, MethodExecutionResults mcr, InAndOutput inout) {
 		out.println("\t@Test");
 		out.println("\tpublic void " + mcr.getMethodName() + index.getValue() + "(){");
 		index.increment();
@@ -54,7 +54,9 @@ public class JUnitSourceWriter extends ResultsWriter {
 	}
 
 	private String toString(Class<?> type, Object object) {
-		if (type == String.class) {
+		if (type.toString().equals("void")) {
+			return "void";
+		} else if (type == String.class) {
 			return "\"" + object + "\"";
 		} else if (type == Double.class || type == double.class) {
 			return object.toString() + "D";
