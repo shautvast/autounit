@@ -1,15 +1,17 @@
-package nl.jssl.autounit;
+package nl.jssl.autounit.classanalyser;
+
+import nl.jssl.autounit.util.Pair;
 
 public class InAndOutput {
-	private final Object input;
+	private final Pair input;
 	private final Object output;
 
-	public InAndOutput(Object input, Object output) {
+	public InAndOutput(Pair input, Object output) {
 		this.input = input;
 		this.output = output;
 	}
 
-	public Object getInput() {
+	public Pair getInput() {
 		return input;
 	}
 

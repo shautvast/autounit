@@ -6,7 +6,7 @@ public class MyMethod {
 		return 0;
 	}
 
-	public Class getReturnType() {
+	public Class<?> getReturnType() {
 		return Void.class;
 	}
 

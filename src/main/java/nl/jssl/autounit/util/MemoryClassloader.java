@@ -1,4 +1,4 @@
-package nl.jssl.autounit.utils;
+package nl.jssl.autounit.util;
 
 import java.util.HashMap;
 import java.util.Map;

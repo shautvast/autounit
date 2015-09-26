@@ -1,21 +1,21 @@
-package nl.jssl.autounit;
+package nl.jssl.autounit.classanalyser;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import nl.jssl.autounit.utils.MemoryClassloader;
-import nl.jssl.autounit.utils.SilentObjectCreator;
-
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
-import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
+
+import nl.jssl.autounit.util.MemoryClassloader;
+import nl.jssl.autounit.util.SilentObjectCreator;
 
 public class CoverageAnalyser {
 	private IRuntime runtime;
@@ -50,20 +50,32 @@ public class CoverageAnalyser {
 			Object output = invoke(instrumentedTestTarget, inputs, instanceMethod);
 
 			// jacoco stuff
-			ExecutionDataStore executionData = new ExecutionDataStore();
-			SessionInfoStore sessionInfos = new SessionInfoStore();
-			data.collect(executionData, sessionInfos, false);
+			ExecutionDataStore executionData = executionData();
+			
 			runtime.shutdown();
 
-			CoverageBuilder coverageBuilder = new CoverageBuilder();
-			Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-			String targetName = instrumentedTestTarget.getClass().getName();
-			analyzer.analyzeClass(getTargetClass(targetName), targetName);
+			CoverageBuilder coverageBuilder = coverageBuilder(instrumentedTestTarget, executionData);
 
 			return new InvocationResult(coverageBuilder.getClasses().iterator().next(), output);
 		} catch (Exception e) {
-			throw new ExecutionException(e);
+			throw new AnalysisFailed(e);
 		}
+	}
+
+	private ExecutionDataStore executionData() {
+		ExecutionDataStore executionData = new ExecutionDataStore();
+		SessionInfoStore sessionInfos = new SessionInfoStore();
+		data.collect(executionData, sessionInfos, false);
+		return executionData;
+	}
+
+	private <T> CoverageBuilder coverageBuilder(T instrumentedTestTarget, ExecutionDataStore executionData)
+			throws IOException {
+		CoverageBuilder coverageBuilder = new CoverageBuilder();
+		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+		String targetName = instrumentedTestTarget.getClass().getName();
+		analyzer.analyzeClass(getTargetClass(targetName), targetName);
+		return coverageBuilder;
 	}
 
 	private <T> Method getInstrumentedMethod(T testTarget, Method method) throws NoSuchMethodException {
@@ -75,29 +87,23 @@ public class CoverageAnalyser {
 		try {
 			output = newInstanceMethod.invoke(testTarget, inputs);
 		} catch (InvocationTargetException i) {
-			StackTraceElement stacktraceElement = i.getTargetException().getStackTrace()[0];
-			String info = stacktraceElement.getClassName() + ":" + stacktraceElement.getLineNumber();
-			output = i.getTargetException().getClass().getName() + "(" + i.getTargetException().getMessage() + ") at "
-					+ info;
+			output = createOutputFromException(i);
 		}
+		return output;
+	}
+
+	private Object createOutputFromException(InvocationTargetException i) {
+		Object output;
+		StackTraceElement stacktraceElement = i.getTargetException().getStackTrace()[0];
+		String info = stacktraceElement.getClassName() + ":" + stacktraceElement.getLineNumber();
+		output = i.getTargetException().getClass().getName() + "(" + i.getTargetException().getMessage() + ") at "
+				+ info;
 		return output;
 	}
 
 	private InputStream getTargetClass(String name) {
 		String resource = '/' + name.replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resource);
-	}
-
-}
-
-class InvocationResult {
-	public final IClassCoverage coverage;
-	public final Object output;
-
-	public InvocationResult(IClassCoverage coverage, Object output) {
-		super();
-		this.coverage = coverage;
-		this.output = output;
 	}
 
 }

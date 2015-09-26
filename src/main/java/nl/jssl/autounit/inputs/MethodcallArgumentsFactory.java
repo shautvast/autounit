@@ -9,14 +9,14 @@ import java.util.Map;
 
 import nl.jssl.autounit.inputs.objects.ObjectArgumentFactory;
 import nl.jssl.autounit.inputs.objects.StringArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.ArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.BooleanArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.ByteArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.DoubleArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.FloatArgumentFactory;
-import nl.jssl.autounit.inputs.primtives.IntegerArgumentFactory;
-import nl.jssl.autounit.utils.Permuter;
-import nl.jssl.autounit.utils.Permuter.Tuple;
+import nl.jssl.autounit.inputs.primitives.ArgumentFactory;
+import nl.jssl.autounit.inputs.primitives.BooleanArgumentFactory;
+import nl.jssl.autounit.inputs.primitives.ByteArgumentFactory;
+import nl.jssl.autounit.inputs.primitives.DoubleArgumentFactory;
+import nl.jssl.autounit.inputs.primitives.FloatArgumentFactory;
+import nl.jssl.autounit.inputs.primitives.IntegerArgumentFactory;
+import nl.jssl.autounit.util.Pair;
+import nl.jssl.autounit.util.Permuter;
 
 public class MethodcallArgumentsFactory {
 	private final Map<Class<?>, ArgumentFactory<?>> primitivesFactories;
@@ -26,11 +26,11 @@ public class MethodcallArgumentsFactory {
 		populateFactories();
 	}
 
-	public List<Tuple> getInputs(Class<?> testTarget, Method m) {
+	public List<Pair> getInputs(Class<?> testTarget, Method m) {
 		return combine(getArgumentsForAllParameters(testTarget, m));
 	}
 
-	private List<Tuple> combine(List<List<?>> inputSetsForAllArguments) {
+	private List<Pair> combine(List<List<?>> inputSetsForAllArguments) {
 		int nrOfParameters = inputSetsForAllArguments.size();
 		if (nrOfParameters == 0) {
 			return Collections.emptyList();
@@ -42,13 +42,13 @@ public class MethodcallArgumentsFactory {
 		}
 	}
 
-	private List<Tuple> makeArgumentsForSingleParameterCall(List<List<?>> generatedInputSetsForAllArguments) {
-		List<Tuple> allPossibleArguments = new ArrayList<Tuple>();
+	private List<Pair> makeArgumentsForSingleParameterCall(List<List<?>> generatedInputSetsForAllArguments) {
+		List<Pair> allPossibleArguments = new ArrayList<>();
 
 		List<?> generatedInputs = generatedInputSetsForAllArguments.iterator().next();
 
 		for (Object variable : generatedInputs) {
-			Tuple argument = new Tuple(variable);
+			Pair argument = new Pair(variable);
 			allPossibleArguments.add(argument);
 		}
 		return allPossibleArguments;

@@ -11,7 +11,7 @@ public class Configuration {
 	public static ClassPool getClassPool() {
 		ClassPool classPool = new ClassPool();
 		try {
-			classPool.appendClassPath("c:\\workspaces\\autounit\\autounit\\bin");
+			classPool.appendClassPath("bin");
 		} catch (NotFoundException e) {
 			throw new RuntimeException(e);
 		}

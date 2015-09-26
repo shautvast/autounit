@@ -1,12 +1,15 @@
-package nl.jssl.autounit;
+package nl.jssl.autounit.classanalyser;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jacoco.core.analysis.IClassCoverage;
 
-public class MethodCallResults {
+import nl.jssl.autounit.util.Pair;
+
+public class MethodCallResults implements Comparable<MethodCallResults> {
 	private transient Object testinstance;
 	private transient Method executedMethod;
 	private List<InAndOutput> contents = new ArrayList<InAndOutput>();
@@ -18,7 +21,7 @@ public class MethodCallResults {
 		this.executedMethod = m;
 	}
 
-	public void addResult(Object input, Object output) {
+	public void addResult(Pair input, Object output) {
 		contents.add(new InAndOutput(input, output));
 	}
 
@@ -53,5 +56,37 @@ public class MethodCallResults {
 			s.append(inAndOutput.getInput() + " => " + inAndOutput.getOutput() + "\n");
 		}
 		return s.toString();
+	}
+
+	public String getMethodSignature() {
+		return getMethodSignature(executedMethod);
+	}
+
+	public String getMethodName() {
+		return executedMethod.getName();
+	}
+
+	private String getMethodSignature(Method m) {
+		String signature = Modifier.toString(m.getModifiers()) + " " + m.getReturnType().getName() + " " + m.getName()
+				+ "(";
+		int index = 1;
+		Class<?>[] parameterTypes = m.getParameterTypes();
+		for (Class<?> type : parameterTypes) {
+			signature += type.getName() + " arg" + (index++);
+			if (index <= parameterTypes.length) {
+				signature += ",";
+			}
+		}
+		signature += ")";
+		return signature;
+	}
+
+	public Class<?> getMethodReturnType() {
+		return executedMethod.getReturnType();
+	}
+
+	@Override
+	public int compareTo(MethodCallResults o) {
+		return getMethodName().compareTo(o.getMethodName());
 	}
 }

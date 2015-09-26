@@ -5,8 +5,8 @@ repositories{
    mavenCentral()
 }
 
-sourceCompatibility = "1.6"
-targetCompatibility = "1.6"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 sourceSets {
     test {
@@ -23,7 +23,7 @@ dependencies{
    compile 'javassist:javassist:3.12.1.GA'
    compile 'com.thoughtworks.xstream:xstream:1.4.7'
    compile 'org.mockito:mockito-all:1.9.5'
+   compile 'org.jacoco:org.jacoco.core:0.7.1.201405082137'
+   
    testCompile 'junit:junit:4.11'
-   testCompile 'org.jacoco:org.jacoco.core:0.7.1.201405082137'
-
 }

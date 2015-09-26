@@ -1,23 +1,28 @@
 package nl.jssl.autounit.inputs.objects;
 
-import java.util.Map;
-import java.util.Set;
+import static org.junit.Assert.assertEquals;
 
-import nl.jssl.autounit.AutoTester;
-import nl.jssl.autounit.MethodCallResults;
-import nl.jssl.autounit.testclasses.SomeBean;
+import java.util.Iterator;
+import java.util.TreeSet;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import nl.jssl.autounit.classanalyser.ClassAnalyser;
+import nl.jssl.autounit.classanalyser.MethodCallResults;
+import nl.jssl.autounit.testclasses.SomeBean;
 
 public class JavaBeanTests {
 	@Test
 	public void testJavaBeanArgument() {
-		Map<String, MethodCallResults> results = new AutoTester().record(SomeBean.class);
-		Set<String> keys = results.keySet();
-		Assert.assertTrue(keys.contains("public void setFoo(java.lang.String arg1)"));
-		MethodCallResults mcr = results.values().iterator().next();
-		System.out.println(mcr.getCoverageResult().getLineCounter().getMissedCount() + " missed lines");
-		System.out.println(mcr.getReport());
+		Iterator<MethodCallResults> results = getSortedAnalysisResults().iterator();
+
+		assertEquals("public int getBar()", results.next().getMethodSignature());
+		assertEquals("public java.lang.String getFoo()", results.next().getMethodSignature());
+		assertEquals("public void setBar(int arg1)", results.next().getMethodSignature());
+		assertEquals("public void setFoo(java.lang.String arg1)", results.next().getMethodSignature());
+	}
+
+	private TreeSet<MethodCallResults> getSortedAnalysisResults() {
+		return new TreeSet<>(new ClassAnalyser(SomeBean.class).analyse().getMethodCallResults());
 	}
 }

@@ -2,8 +2,8 @@ package nl.jssl.autounit.inputs.objects;
 
 import javassist.ClassPool;
 import nl.jssl.autounit.inputs.ArgumentsForSingleParameter;
-import nl.jssl.autounit.inputs.primtives.ArgumentFactory;
-import nl.jssl.autounit.utils.ConstantpoolReader;
+import nl.jssl.autounit.inputs.primitives.ArgumentFactory;
+import nl.jssl.autounit.util.ConstantpoolReader;
 
 /**
  * Creates Strings as arguments for a method call. Uses bytecode analysis to scan the class-under-test for "interesting"

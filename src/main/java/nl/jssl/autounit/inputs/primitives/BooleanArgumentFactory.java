@@ -1,4 +1,4 @@
-package nl.jssl.autounit.inputs.primtives;
+package nl.jssl.autounit.inputs.primitives;
 
 import nl.jssl.autounit.inputs.ArgumentsForSingleParameter;
 

@@ -1,6 +1,4 @@
-package nl.jssl.autounit.utils;
-
-import nl.jssl.autounit.utils.Permuter.Tuple;
+package nl.jssl.autounit.util;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -12,11 +10,11 @@ public class XStreamArgumentsConverter implements Converter {
 
 	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
-		return (clazz == Tuple.class);
+		return (clazz == Pair.class);
 	}
 
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-		Tuple arguments = (Tuple) value;
+		Pair arguments = (Pair) value;
 		int index = 1;
 		for (Object arg : arguments) {
 			writer.startNode("arg" + index);
